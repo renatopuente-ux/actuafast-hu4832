@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACTAF-4832 — Pantalla Unificada de Descarga · ActuaFast</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter','Segoe UI',sans-serif; background: #f1f4f9; color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* ── VARIABLES ── */
+  :root {
+    --navy: #0f1f3d;
+    --navy-hover: #1a3160;
+    --orange: #f97316;
+    --green: #16a34a;
+    --green-hover: #15803d;
+    --red-dl: #dc4f1e;
+    --red-hover: #c2410c;
+    --blue-light: #e8f0fe;
+    --border: #e2e8f0;
+    --text-main: #1e293b;
+    --text-sub: #64748b;
+    --text-muted: #94a3b8;
+    --sidebar-w: 240px;
+    --success: #16a34a;
+    --warning: #d97706;
+    --danger: #dc2626;
+    --info: #2563eb;
+  }
+
+  /* ══════════════════════════════
+     TOP HEADER
+  ══════════════════════════════ */
+  .top-header {
+    background: var(--navy); height: 52px; display: flex; align-items: center;
+    padding: 0 20px; gap: 16px; flex-shrink: 0; z-index: 100;
+    position: sticky; top: 0;
+  }
+  .hamburger { background: none; border: none; cursor: pointer; color: #94a3b8; font-size: 18px; padding: 4px; }
+  .logo { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo .actua { color: #fff; }
+  .logo .fast { color: var(--orange); }
+  .header-spacer { flex: 1; }
+  .header-user { display: flex; align-items: center; gap: 8px; color: #c8d3e6; font-size: 13px; }
+  .user-avatar { width: 30px; height: 30px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+
+  /* ══════════════════════════════
+     LAYOUT
+  ══════════════════════════════ */
+  .app-body { display: flex; flex: 1; overflow: hidden; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w); background: #fff; border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto;
+  }
+  .nav-section-label { font-size: 10px; font-weight: 700; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; padding: 16px 16px 6px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px; padding: 8px 16px;
+    font-size: 13px; color: var(--text-sub); cursor: pointer; border-radius: 0;
+    transition: background 0.15s; position: relative; text-decoration: none;
+  }
+  .nav-item:hover { background: #f8fafc; color: var(--text-main); }
+  .nav-item.active { background: var(--blue-light); color: var(--navy); font-weight: 600; }
+  .nav-item.active::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: var(--navy); border-radius: 0 2px 2px 0; }
+  .nav-item .nav-icon { font-size: 15px; width: 18px; flex-shrink: 0; }
+  .nav-item .nav-chevron { margin-left: auto; font-size: 11px; color: var(--text-muted); }
+  .nav-sub { padding-left: 16px; }
+  .nav-sub .nav-item { padding-left: 28px; font-size: 12px; }
+  .sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid var(--border); }
+  .app-version { font-size: 11px; font-weight: 700; color: var(--text-main); }
+  .app-version-num { font-size: 11px; color: var(--text-muted); }
+  .app-help { font-size: 11px; color: var(--info); text-decoration: underline; cursor: pointer; }
+
+  /* ── MAIN CONTENT ── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ── BREADCRUMB ── */
+  .breadcrumb { background: #fff; border-bottom: 1px solid var(--border); padding: 10px 24px; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+  .breadcrumb a { color: var(--info); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .breadcrumb-sep { color: var(--text-muted); }
+
+  /* ── STUDY HEADER ── */
+  .study-header { background: #fff; border-bottom: 1px solid var(--border); padding: 16px 24px; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+  .study-title-row { display: flex; align-items: center; gap: 10px; }
+  .study-title { font-size: 22px; font-weight: 400; color: var(--text-main); }
+  .study-title strong { font-weight: 800; }
+  .study-title-chevron { color: var(--text-muted); font-size: 16px; cursor: pointer; }
+  .study-client { font-size: 13px; color: var(--text-sub); margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+  .study-client-info { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--text-muted); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: var(--text-muted); cursor: pointer; }
+  .normativa-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+  .study-actions { display: flex; align-items: center; gap: 12px; }
+  .btn-calc { display: flex; align-items: center; gap: 0; border-radius: 6px; overflow: hidden; }
+  .btn-calc-main { background: var(--navy); color: #fff; border: none; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+  .btn-calc-main:hover { background: var(--navy-hover); }
+  .btn-calc-arrow { background: #1e3a6e; color: #fff; border: none; border-left: 1px solid rgba(255,255,255,0.15); padding: 8px 10px; cursor: pointer; font-size: 12px; }
+  .status-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-sub); margin-top: 4px; }
+  .status-badge { padding: 2px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; }
+  .status-ejecutado { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+  .status-pendiente { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+  .status-error { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+
+  /* ── TABS ── */
+  .study-tabs { background: #fff; border-bottom: 2px solid var(--border); padding: 0 24px; display: flex; gap: 0; }
+  .tab { padding: 12px 20px; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; letter-spacing: 0.3px; text-transform: uppercase; transition: all 0.15s; }
+  .tab:hover { color: var(--text-main); }
+  .tab.active { color: var(--navy); border-bottom-color: var(--navy); }
+
+  /* ── CONTENT AREA ── */
+  .content-area { display: flex; flex: 1; overflow: hidden; }
+
+  /* ── ICON NAV (left vertical) ── */
+  .icon-nav { width: 48px; background: #fff; border-right: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; padding: 8px 0; gap: 2px; flex-shrink: 0; }
+  .icon-nav-btn { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; color: var(--text-muted); transition: all 0.15s; border: none; background: none; }
+  .icon-nav-btn:hover { background: #f1f5f9; color: var(--text-main); }
+  .icon-nav-btn.active { background: var(--blue-light); color: var(--navy); }
+
+  /* ── PAGE CONTENT ── */
+  .page-content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+
+  /* ══════════════════════════════
+     STATE SIMULATOR (prototype)
+  ══════════════════════════════ */
+  .state-bar {
+    background: #1e293b; border-radius: 10px; padding: 10px 16px;
+    display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .state-bar-label { font-size: 10px; font-weight: 700; color: #64748b; letter-spacing: 1px; text-transform: uppercase; margin-right: 4px; }
+  .state-btn { padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; border: 1.5px solid rgba(255,255,255,0.15); color: #94a3b8; cursor: pointer; background: none; transition: all 0.15s; }
+  .state-btn:hover { border-color: rgba(255,255,255,0.35); color: #e2e8f0; }
+  .state-btn.active { background: #fff; color: #1e293b; border-color: #fff; }
+
+  /* ══════════════════════════════
+     DOWNLOAD PAGE CONTENT
+  ══════════════════════════════ */
+  .page-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .page-title { font-size: 17px; font-weight: 700; color: var(--text-main); }
+  .page-desc { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; }
+
+  /* ── JP/BD/COMBINADO SELECTOR ── */
+  .selector-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .selector-label { font-size: 12px; font-weight: 600; color: var(--text-sub); }
+  .selector-tabs { display: flex; background: #f1f5f9; border-radius: 8px; padding: 3px; gap: 2px; }
+  .sel-tab { padding: 6px 18px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-sub); border: none; background: none; transition: all 0.15s; }
+  .sel-tab:hover { color: var(--text-main); }
+  .sel-tab.active { background: #fff; color: var(--navy); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+  /* ── CARDS LAYOUT ── */
+  .download-grid { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
+
+  /* ── INFORME CARD ── */
+  .informe-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .card-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .card-icon { width: 36px; height: 36px; border-radius: 8px; background: #eff6ff; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .card-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
+  .card-sub { font-size: 11px; color: var(--text-sub); margin-top: 1px; }
+  .card-body { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+  .field-label { font-size: 11px; font-weight: 600; color: var(--text-sub); margin-bottom: 5px; }
+  .field-input-row { display: flex; align-items: center; border: 1.5px solid var(--border); border-radius: 7px; overflow: hidden; background: #fff; transition: border-color 0.15s; }
+  .field-input-row:focus-within { border-color: #2563eb; }
+  .field-input { flex: 1; border: none; outline: none; padding: 9px 12px; font-size: 13px; color: var(--text-main); font-family: inherit; }
+  .field-input-suffix { padding: 9px 12px; font-size: 12px; color: var(--text-muted); background: #f8fafc; border-left: 1.5px solid var(--border); font-weight: 600; }
+  .checkbox-row { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+  .checkbox-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--navy); cursor: pointer; flex-shrink: 0; margin-top: 1px; }
+  .checkbox-label { font-size: 13px; color: var(--text-main); line-height: 1.4; }
+  .checkbox-hint { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+  .btn-download-main { width: 100%; padding: 11px; border-radius: 8px; background: var(--navy); color: #fff; border: none; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.15s; }
+  .btn-download-main:hover:not(:disabled) { background: var(--navy-hover); }
+  .btn-download-main:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  /* ── ANEXOS CARD ── */
+  .anexos-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .anexos-group-label { font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; padding: 14px 20px 8px; background: #f8fafc; border-bottom: 1px solid var(--border); }
+  .anexo-row { display: flex; align-items: center; padding: 11px 20px; border-bottom: 1px solid var(--border); gap: 12px; transition: background 0.1s; }
+  .anexo-row:last-child { border-bottom: none; }
+  .anexo-row:hover { background: #f8fafc; }
+  .anexo-row.disabled { opacity: 0.45; }
+  .anexo-icon { font-size: 15px; flex-shrink: 0; width: 20px; }
+  .anexo-name { flex: 1; font-size: 13px; color: var(--text-main); font-weight: 500; }
+  .anexo-name small { display: block; font-size: 11px; color: var(--text-sub); font-weight: 400; margin-top: 1px; }
+  .anexo-btns { display: flex; gap: 6px; align-items: center; }
+  .btn-excel { padding: 5px 12px; border-radius: 5px; background: var(--green); color: #fff; border: none; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: background 0.15s; }
+  .btn-excel:hover:not(:disabled) { background: var(--green-hover); }
+  .btn-excel:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-pdf { padding: 5px 12px; border-radius: 5px; background: var(--red-dl); color: #fff; border: none; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: background 0.15s; }
+  .btn-pdf:hover:not(:disabled) { background: var(--red-hover); }
+  .btn-pdf:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-icon-txt { font-size: 12px; }
+  .missing-badge { font-size: 10px; font-weight: 600; color: var(--warning); background: #fef3c7; border: 1px solid #fcd34d; padding: 2px 8px; border-radius: 99px; display: flex; align-items: center; gap: 4px; }
+  .insuf-badge { font-size: 10px; font-weight: 600; color: var(--text-muted); background: #f1f5f9; border: 1px solid var(--border); padding: 2px 8px; border-radius: 99px; }
+
+  /* ── INLINE STATE MESSAGES ── */
+  .state-message { border-radius: 8px; padding: 12px 16px; display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+  .state-message.generating { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .state-message.success { background: #f0fdf4; border: 1px solid #86efac; }
+  .state-message.error { background: #fef2f2; border: 1px solid #fca5a5; }
+  .state-message.warning { background: #fffbeb; border: 1px solid #fde68a; }
+  .state-msg-icon { font-size: 18px; flex-shrink: 0; }
+  .state-msg-title { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+  .state-msg-sub { font-size: 12px; color: var(--text-sub); }
+  .generating .state-msg-title { color: var(--info); }
+  .success .state-msg-title { color: var(--success); }
+  .error .state-msg-title { color: var(--danger); }
+  .warning .state-msg-title { color: var(--warning); }
+  .btn-retry { margin-top: 8px; padding: 5px 14px; border-radius: 6px; background: var(--danger); color: #fff; border: none; font-size: 12px; font-weight: 600; cursor: pointer; }
+  .progress-bar-wrap { height: 4px; background: #bfdbfe; border-radius: 99px; margin-top: 8px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--info); border-radius: 99px; animation: progress 2s ease-in-out infinite; }
+  @keyframes progress { 0% { width: 15%; } 50% { width: 75%; } 100% { width: 15%; } }
+
+  /* ── HIDDEN ELEMENTS (state control) ── */
+  .state-hidden { display: none !important; }
+  .state-disabled { pointer-events: none; opacity: 0.5; }
+
+  /* ── SPEC NOTES (prototype annotation) ── */
+  .spec-note {
+    position: fixed; bottom: 16px; right: 16px; background: #1e293b; color: #c8d3e6;
+    border-radius: 10px; padding: 12px 16px; font-size: 11px; max-width: 260px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3); z-index: 200;
+  }
+  .spec-note-title { font-weight: 700; color: #fff; margin-bottom: 6px; font-size: 12px; }
+  .spec-note-item { display: flex; gap: 6px; margin-bottom: 3px; color: #94a3b8; }
+  .spec-note-item::before { content: '·'; color: #4c64d9; }
+  .spec-close { position: absolute; top: 8px; right: 10px; background: none; border: none; color: #64748b; cursor: pointer; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ TOP HEADER ════════════════════ -->
+<div class="top-header">
+  <button class="hamburger">☰</button>
+  <div class="logo"><span class="actua">ACTUA</span><span class="fast">FAST</span></div>
+  <div class="header-spacer"></div>
+  <div class="header-user">
+    <div class="user-avatar">RP</div>
+    Renato Puente
+  </div>
+</div>
+
+<div class="app-body">
+
+<!-- ════════════════════ SIDEBAR ════════════════════ -->
+<aside class="sidebar">
+  <nav>
+    <div class="nav-item" onclick="location.href='#'">
+      <span class="nav-icon">🏠</span> Inicio
+    </div>
+
+    <div class="nav-section-label">Administración</div>
+    <div class="nav-item active">
+      <span class="nav-icon">👥</span> Gestión de estudios
+      <span class="nav-chevron">∧</span>
+    </div>
+    <div class="nav-sub">
+      <div class="nav-item">Asignación de estudios</div>
+    </div>
+
+    <div class="nav-section-label">Operaciones</div>
+    <div class="nav-item">
+      <span class="nav-icon">📄</span> Actas de finiquito
+      <span class="nav-chevron">∨</span>
+    </div>
+    <div class="nav-item active">
+      <span class="nav-icon">📋</span> Estudios actuariales
+      <span class="nav-chevron">∧</span>
+    </div>
+    <div class="nav-sub">
+      <div class="nav-item">Crear estudio actuarial</div>
+      <div class="nav-item">Mis estudios actuariales</div>
+      <div class="nav-item">Importar estudio</div>
+      <div class="nav-item">Estudios importados</div>
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">📊</span> Impuestos diferidos
+      <span class="nav-chevron">∨</span>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="app-version">ActuaFast by Actuaria</div>
+    <div class="app-version-num">2.17.16</div>
+    <div class="app-help">Ayuda</div>
+  </div>
+</aside>
+
+<!-- ════════════════════ MAIN ════════════════════ -->
+<div class="main">
+
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="#">Inicio</a>
+    <span class="breadcrumb-sep">›</span>
+    <span>Editar Estudio</span>
+  </div>
+
+  <!-- STUDY HEADER -->
+  <div class="study-header">
+    <div>
+      <div class="study-title-row">
+        <div class="study-title">Estudio Actuarial <strong>136789</strong></div>
+        <span class="study-title-chevron">∨</span>
+      </div>
+      <div class="study-client">
+        ADMIPESA S.A
+        <span class="study-client-info">i</span>
+        <span class="normativa-badge" id="normativa-badge">NIIF Completas</span>
+      </div>
+    </div>
+    <div class="study-actions">
+      <div>
+        <div class="btn-calc">
+          <button class="btn-calc-main">▶ Ejecutar Cálculo Completo</button>
+          <button class="btn-calc-arrow">▼</button>
+        </div>
+        <div class="status-row">
+          Estado: <span class="status-badge status-ejecutado" id="status-badge">EJECUTADO</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="study-tabs">
+    <div class="tab">PARAMETRIZACIÓN</div>
+    <div class="tab">EMPLEADOS</div>
+    <div class="tab active">RESULTADOS</div>
+  </div>
+
+  <!-- CONTENT AREA -->
+  <div class="content-area">
+
+    <!-- ICON NAV -->
+    <div class="icon-nav">
+      <button class="icon-nav-btn" title="Resumen">≡</button>
+      <button class="icon-nav-btn" title="Validación">✔</button>
+      <button class="icon-nav-btn" title="Datos">⬡</button>
+      <button class="icon-nav-btn active" title="Descargas">⬇</button>
+      <button class="icon-nav-btn" title="Copiar">⧉</button>
+      <button class="icon-nav-btn" title="Historial">📄</button>
+      <button class="icon-nav-btn" title="Duplicar">⊕</button>
+      <button class="icon-nav-btn" title="Opciones">✦</button>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <div class="page-content">
+
+      <!-- STATE SIMULATOR (prototype only) -->
+      <div class="state-bar">
+        <span class="state-bar-label">🎛 Estado</span>
+        <button class="state-btn active" onclick="setState('default', this)">Por defecto</button>
+        <button class="state-btn" onclick="setState('generating', this)">Generando</button>
+        <button class="state-btn" onclick="setState('success', this)">Descarga lista</button>
+        <button class="state-btn" onclick="setState('error', this)">Error</button>
+        <button class="state-btn" onclick="setState('missing', this)">Anexo incompleto</button>
+        <button class="state-btn" onclick="setState('nodata', this)">Sin datos</button>
+        <span style="margin-left:12px;color:#475569;font-size:10px;font-weight:600;">NORMATIVA</span>
+        <button class="state-btn" onclick="setNorm('NIIF Completas', this)" style="margin-left:0;">NIIF C</button>
+        <button class="state-btn" onclick="setNorm('NIIF Pymes', this)">NIIF P</button>
+        <button class="state-btn" onclick="setNorm('NEC', this)">NEC</button>
+        <button class="state-btn" onclick="setNorm('NIC 12', this)">NIC 12</button>
+      </div>
+
+      <!-- PAGE TITLE -->
+      <div class="page-title-row">
+        <div>
+          <div class="page-title">Descargas</div>
+          <div class="page-desc">Descarga el informe actuarial y los anexos del estudio según normativa y tipo de beneficio.</div>
+        </div>
+      </div>
+
+      <!-- JP / BD / COMBINADO SELECTOR -->
+      <div class="selector-row">
+        <span class="selector-label">Tipo de beneficio:</span>
+        <div class="selector-tabs">
+          <button class="sel-tab active" onclick="setSel('jp', this)">Jubilación Patronal</button>
+          <button class="sel-tab" onclick="setSel('bd', this)">Bonificación por Desahucio</button>
+          <button class="sel-tab" onclick="setSel('comb', this)">Combinado</button>
+        </div>
+      </div>
+
+      <!-- STATE MESSAGES -->
+      <div class="state-message generating state-hidden" id="msg-generating">
+        <span class="state-msg-icon">⏳</span>
+        <div>
+          <div class="state-msg-title">Generando archivo…</div>
+          <div class="state-msg-sub">Esto puede tardar unos segundos. No cierre esta ventana.</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill"></div></div>
+        </div>
+      </div>
+
+      <div class="state-message success state-hidden" id="msg-success">
+        <span class="state-msg-icon">✅</span>
+        <div>
+          <div class="state-msg-title">Descarga lista</div>
+          <div class="state-msg-sub">El archivo se descargó correctamente. Revisa tu carpeta de descargas.</div>
+        </div>
+      </div>
+
+      <div class="state-message error state-hidden" id="msg-error">
+        <span class="state-msg-icon">❌</span>
+        <div>
+          <div class="state-msg-title">Error al generar el archivo</div>
+          <div class="state-msg-sub">No se pudo generar el archivo. Verifica los datos del estudio e intenta nuevamente.</div>
+          <button class="btn-retry">↺ Reintentar</button>
+        </div>
+      </div>
+
+      <div class="state-message warning state-hidden" id="msg-missing">
+        <span class="state-msg-icon">⚠️</span>
+        <div>
+          <div class="state-msg-title">Anexo obligatorio sin calcular</div>
+          <div class="state-msg-sub">El <strong>Resumen de Aplicación</strong> requiere que primero ejecutes el cálculo completo desde el encabezado.</div>
+        </div>
+      </div>
+
+      <!-- DOWNLOAD GRID -->
+      <div class="download-grid">
+
+        <!-- INFORME ACTUARIAL CARD -->
+        <div class="informe-card">
+          <div class="card-header">
+            <div class="card-icon">📑</div>
+            <div>
+              <div class="card-title">Informe Actuarial</div>
+              <div class="card-sub">Documento oficial en PDF según normativa activa</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div>
+              <div class="field-label">Nombre del archivo</div>
+              <div class="field-input-row">
+                <input class="field-input" type="text" value="ADMIPESA S.A NIIF 2025" id="filename-input">
+                <div class="field-input-suffix">.pdf</div>
+              </div>
+            </div>
+            <label class="checkbox-row">
+              <input type="checkbox" id="cb-iarm">
+              <div>
+                <div class="checkbox-label">Agrupar IARM por centro de costo</div>
+                <div class="checkbox-hint">Aplica solo si el estudio tiene centros de costo configurados.</div>
+              </div>
+            </label>
+            <button class="btn-download-main" id="btn-informe" onclick="simulateDownload()">
+              ⬇ Descargar Informe PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- ANEXOS CARD -->
+        <div class="anexos-card">
+
+          <!-- PRINCIPALES -->
+          <div class="anexos-group-label">Anexos Principales</div>
+
+          <div class="anexo-row" id="row-resumen">
+            <span class="anexo-icon">📊</span>
+            <div class="anexo-name">
+              Resumen de Aplicación
+              <small>Resumen general del estudio actuarial</small>
+            </div>
+            <div class="anexo-btns">
+              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
+              <button class="btn-pdf" onclick="dl('pdf')"><span class="btn-icon-txt">⬇</span> PDF</button>
+            </div>
+          </div>
+
+          <div class="anexo-row" id="row-demografica">
+            <span class="anexo-icon">👥</span>
+            <div class="anexo-name">
+              Anexo de Composición Demográfica
+              <small>Distribución y perfil de empleados del estudio</small>
+            </div>
+            <div class="anexo-btns">
+              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
+            </div>
+          </div>
+
+          <div class="anexo-row" id="row-salidas">
+            <span class="anexo-icon">📤</span>
+            <div class="anexo-name">
+              Anexo de Salidas
+              <small>Registro de movimientos de empleados del período</small>
+            </div>
+            <div class="anexo-btns">
+              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
+            </div>
+          </div>
+
+          <!-- ADICIONALES -->
+          <div class="anexos-group-label">Anexos Adicionales</div>
+
+          <div class="anexo-row" id="row-contabilizacion">
+            <span class="anexo-icon">📒</span>
+            <div class="anexo-name">
+              Anexo de Contabilización
+              <small>Asientos contables bajo normativa activa</small>
+            </div>
+            <div class="anexo-btns">
+              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
+              <button class="btn-pdf" onclick="dl('pdf')"><span class="btn-icon-txt">⬇</span> PDF</button>
+            </div>
+          </div>
+
+          <div class="anexo-row" id="row-pyg">
+            <span class="anexo-icon">📈</span>
+            <div class="anexo-name">
+              Anexo de Pérdidas y Ganancias
+              <small>Impacto en el estado de resultados</small>
+            </div>
+            <div class="anexo-btns">
+              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
+            </div>
+          </div>
+
+          <div class="anexo-row" id="row-pagos">
+            <span class="anexo-icon">💰</span>
+            <div class="anexo-name">
+              Anexo Complementario de Pagos
+              <small>Detalle de pagos realizados en el período</small>
+            </div>
+            <div class="anexo-btns">
+              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
+            </div>
+          </div>
+
+          <!-- NIC 12 ONLY (hidden by default) -->
+          <div class="anexo-row state-hidden" id="row-nic12" style="border-top:1px solid var(--border);">
+            <span class="anexo-icon">🧾</span>
+            <div class="anexo-name">
+              Impuesto Diferido NIC 12
+              <small>Tabla de impuesto diferido por beneficios post-empleo</small>
+            </div>
+            <div class="anexo-btns">
+              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
+              <button class="btn-pdf" onclick="dl('pdf')"><span class="btn-icon-txt">⬇</span> PDF</button>
+            </div>
+          </div>
+
+        </div><!-- /anexos-card -->
+      </div><!-- /download-grid -->
+
+    </div><!-- /page-content -->
+  </div><!-- /content-area -->
+</div><!-- /main -->
+</div><!-- /app-body -->
+
+<!-- SPEC NOTE -->
+<div class="spec-note" id="spec-note">
+  <button class="spec-close" onclick="document.getElementById('spec-note').remove()">✕</button>
+  <div class="spec-note-title">ACTAF-4832 · Prototipo</div>
+  <div class="spec-note-item">Usa la barra de estado para simular los 6 estados</div>
+  <div class="spec-note-item">Cambia la normativa para ver variaciones de anexos</div>
+  <div class="spec-note-item">El selector JP/BD/Comb controla qué columnas aplican</div>
+  <div class="spec-note-item">Diseño base: Design System ActuaFast v2.17</div>
+</div>
+
+<script>
+// ── STATE MACHINE ──
+function setState(state, btn) {
+  // reset all state buttons
+  document.querySelectorAll('.state-bar .state-btn').forEach(b => {
+    if (!b.onclick?.toString().includes('setNorm') && !b.onclick?.toString().includes('setSel')) b.classList.remove('active');
+  });
+  btn.classList.add('active');
+
+  // hide all messages
+  ['msg-generating','msg-success','msg-error','msg-missing'].forEach(id => {
+    document.getElementById(id).classList.add('state-hidden');
+  });
+
+  const btnInforme = document.getElementById('btn-informe');
+  const allBtns = document.querySelectorAll('.btn-excel, .btn-pdf, .btn-download-main');
+  const allRows = document.querySelectorAll('.anexo-row');
+  const statusBadge = document.getElementById('status-badge');
+
+  // reset
+  allBtns.forEach(b => { b.disabled = false; });
+  allRows.forEach(r => { r.classList.remove('disabled'); });
+  statusBadge.className = 'status-badge status-ejecutado';
+  statusBadge.textContent = 'EJECUTADO';
+
+  switch(state) {
+    case 'default':
+      break;
+    case 'generating':
+      document.getElementById('msg-generating').classList.remove('state-hidden');
+      allBtns.forEach(b => { b.disabled = true; });
+      break;
+    case 'success':
+      document.getElementById('msg-success').classList.remove('state-hidden');
+      break;
+    case 'error':
+      document.getElementById('msg-error').classList.remove('state-hidden');
+      statusBadge.className = 'status-badge status-error';
+      statusBadge.textContent = 'ERROR';
+      break;
+    case 'missing':
+      document.getElementById('msg-missing').classList.remove('state-hidden');
+      const row = document.getElementById('row-resumen');
+      row.classList.add('disabled');
+      row.querySelectorAll('button').forEach(b => b.disabled = true);
+      // show missing badge
+      const btns = row.querySelector('.anexo-btns');
+      if (!btns.querySelector('.missing-badge')) {
+        const badge = document.createElement('span');
+        badge.className = 'missing-badge';
+        badge.innerHTML = '⚠ Sin calcular';
+        btns.insertBefore(badge, btns.firstChild);
+      }
+      break;
+    case 'nodata':
+      statusBadge.className = 'status-badge status-pendiente';
+      statusBadge.textContent = 'SIN DATOS';
+      allBtns.forEach(b => { b.disabled = true; });
+      allRows.forEach(r => {
+        r.classList.add('disabled');
+        const existingBadge = r.querySelector('.insuf-badge');
+        if (!existingBadge) {
+          const badge = document.createElement('span');
+          badge.className = 'insuf-badge';
+          badge.textContent = 'Sin datos';
+          r.querySelector('.anexo-btns').insertBefore(badge, r.querySelector('.anexo-btns').firstChild);
+        }
+      });
+      break;
+  }
+
+  // cleanup missing badges on non-missing states
+  if (state !== 'missing') {
+    document.querySelectorAll('.missing-badge, .insuf-badge').forEach(b => b.remove());
+    document.getElementById('row-resumen').classList.remove('disabled');
+  }
+}
+
+// ── NORMATIVA ──
+function setNorm(norm, btn) {
+  document.querySelectorAll('.state-bar .state-btn').forEach(b => {
+    if (b.onclick?.toString().includes('setNorm')) b.classList.remove('active');
+  });
+  btn.classList.add('active');
+
+  document.getElementById('normativa-badge').textContent = norm;
+
+  const nic12Row = document.getElementById('row-nic12');
+  if (norm === 'NIC 12') {
+    nic12Row.classList.remove('state-hidden');
+  } else {
+    nic12Row.classList.add('state-hidden');
+  }
+
+  // Update filename
+  const year = new Date().getFullYear();
+  document.getElementById('filename-input').value = `ADMIPESA S.A ${norm} ${year}`;
+}
+
+// ── JP/BD/COMBINADO ──
+function setSel(type, btn) {
+  document.querySelectorAll('.sel-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // In a real implementation this would filter columns — for the prototype it's visual only
+}
+
+// ── DOWNLOAD SIMULATION ──
+function simulateDownload() {
+  const btn = document.getElementById('btn-informe');
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Generando…';
+  document.getElementById('msg-generating').classList.remove('state-hidden');
+  ['msg-success','msg-error','msg-missing'].forEach(id => document.getElementById(id).classList.add('state-hidden'));
+
+  setTimeout(() => {
+    document.getElementById('msg-generating').classList.add('state-hidden');
+    document.getElementById('msg-success').classList.remove('state-hidden');
+    btn.disabled = false;
+    btn.innerHTML = original;
+  }, 2500);
+}
+
+function dl(type) {
+  // Visual feedback only for prototype
+  const btn = event.currentTarget;
+  const orig = btn.innerHTML;
+  btn.innerHTML = '⏳';
+  btn.disabled = true;
+  setTimeout(() => {
+    btn.innerHTML = '✓';
+    setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 800);
+  }, 1000);
+}
+</script>
+
+</body>
+</html>
