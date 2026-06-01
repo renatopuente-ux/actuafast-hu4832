@@ -4,7 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ACTAF-4832 — Pantalla Unificada de Descarga · ActuaFast</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <style>
+  .fa-spin { animation: fa-spin 1s linear infinite; }
+  @keyframes fa-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Inter','Segoe UI',sans-serif; background: #f1f4f9; color: #1e293b; min-height: 100vh; display: flex; flex-direction: column; }
@@ -231,7 +234,7 @@
 
 <!-- ════════════════════ TOP HEADER ════════════════════ -->
 <div class="top-header">
-  <button class="hamburger">☰</button>
+  <button class="hamburger"><i class="fa-solid fa-bars"></i></button>
   <div class="logo"><span class="actua">ACTUA</span><span class="fast">FAST</span></div>
   <div class="header-spacer"></div>
   <div class="header-user">
@@ -246,13 +249,13 @@
 <aside class="sidebar">
   <nav>
     <div class="nav-item" onclick="location.href='#'">
-      <span class="nav-icon">🏠</span> Inicio
+      <span class="nav-icon"><i class="fa-solid fa-house"></i></span> Inicio
     </div>
 
     <div class="nav-section-label">Administración</div>
     <div class="nav-item active">
-      <span class="nav-icon">👥</span> Gestión de estudios
-      <span class="nav-chevron">∧</span>
+      <span class="nav-icon"><i class="fa-solid fa-users"></i></span> Gestión de estudios
+      <span class="nav-chevron"><i class="fa-solid fa-chevron-up"></i></span>
     </div>
     <div class="nav-sub">
       <div class="nav-item">Asignación de estudios</div>
@@ -260,12 +263,12 @@
 
     <div class="nav-section-label">Operaciones</div>
     <div class="nav-item">
-      <span class="nav-icon">📄</span> Actas de finiquito
-      <span class="nav-chevron">∨</span>
+      <span class="nav-icon"><i class="fa-solid fa-file-lines"></i></span> Actas de finiquito
+      <span class="nav-chevron"><i class="fa-solid fa-chevron-down"></i></span>
     </div>
     <div class="nav-item active">
-      <span class="nav-icon">📋</span> Estudios actuariales
-      <span class="nav-chevron">∧</span>
+      <span class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></span> Estudios actuariales
+      <span class="nav-chevron"><i class="fa-solid fa-chevron-up"></i></span>
     </div>
     <div class="nav-sub">
       <div class="nav-item">Crear estudio actuarial</div>
@@ -274,8 +277,8 @@
       <div class="nav-item">Estudios importados</div>
     </div>
     <div class="nav-item">
-      <span class="nav-icon">📊</span> Impuestos diferidos
-      <span class="nav-chevron">∨</span>
+      <span class="nav-icon"><i class="fa-solid fa-chart-bar"></i></span> Impuestos diferidos
+      <span class="nav-chevron"><i class="fa-solid fa-chevron-down"></i></span>
     </div>
   </nav>
   <div class="sidebar-footer">
@@ -291,7 +294,7 @@
   <!-- BREADCRUMB -->
   <div class="breadcrumb">
     <a href="#">Inicio</a>
-    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
     <span>Editar Estudio</span>
   </div>
 
@@ -300,7 +303,7 @@
     <div>
       <div class="study-title-row">
         <div class="study-title">Estudio Actuarial <strong>136789</strong></div>
-        <span class="study-title-chevron">∨</span>
+        <span class="study-title-chevron"><i class="fa-solid fa-chevron-down"></i></span>
       </div>
       <div class="study-client">
         ADMIPESA S.A
@@ -311,8 +314,8 @@
     <div class="study-actions">
       <div>
         <div class="btn-calc">
-          <button class="btn-calc-main">▶ Ejecutar Cálculo Completo</button>
-          <button class="btn-calc-arrow">▼</button>
+          <button class="btn-calc-main"><i class="fa-solid fa-play"></i> Ejecutar Cálculo Completo</button>
+          <button class="btn-calc-arrow"><i class="fa-solid fa-caret-down"></i></button>
         </div>
         <div class="status-row">
           Estado: <span class="status-badge status-ejecutado" id="status-badge">EJECUTADO</span>
@@ -333,14 +336,14 @@
 
     <!-- ICON NAV -->
     <div class="icon-nav">
-      <button class="icon-nav-btn" title="Resumen">≡</button>
-      <button class="icon-nav-btn" title="Validación">✔</button>
-      <button class="icon-nav-btn" title="Datos">⬡</button>
-      <button class="icon-nav-btn active" title="Descargas">⬇</button>
-      <button class="icon-nav-btn" title="Copiar">⧉</button>
-      <button class="icon-nav-btn" title="Historial">📄</button>
-      <button class="icon-nav-btn" title="Duplicar">⊕</button>
-      <button class="icon-nav-btn" title="Opciones">✦</button>
+      <button class="icon-nav-btn" title="Resumen"><i class="fa-solid fa-list"></i></button>
+      <button class="icon-nav-btn" title="Validación"><i class="fa-solid fa-circle-check"></i></button>
+      <button class="icon-nav-btn" title="Datos"><i class="fa-solid fa-table-cells"></i></button>
+      <button class="icon-nav-btn active" title="Descargas"><i class="fa-solid fa-download"></i></button>
+      <button class="icon-nav-btn" title="Copiar"><i class="fa-solid fa-copy"></i></button>
+      <button class="icon-nav-btn" title="Historial"><i class="fa-solid fa-clock-rotate-left"></i></button>
+      <button class="icon-nav-btn" title="Duplicar"><i class="fa-solid fa-circle-plus"></i></button>
+      <button class="icon-nav-btn" title="Opciones"><i class="fa-solid fa-ellipsis-vertical"></i></button>
     </div>
 
     <!-- PAGE CONTENT -->
@@ -348,7 +351,7 @@
 
       <!-- STATE SIMULATOR (prototype only) -->
       <div class="state-bar">
-        <span class="state-bar-label">🎛 Estado</span>
+        <span class="state-bar-label"><i class="fa-solid fa-sliders"></i> Estado</span>
         <button class="state-btn active" onclick="setState('default', this)">Por defecto</button>
         <button class="state-btn" onclick="setState('generating', this)">Generando</button>
         <button class="state-btn" onclick="setState('success', this)">Descarga lista</button>
@@ -382,7 +385,7 @@
 
       <!-- STATE MESSAGES -->
       <div class="state-message generating state-hidden" id="msg-generating">
-        <span class="state-msg-icon">⏳</span>
+        <span class="state-msg-icon"><i class="fa-solid fa-spinner fa-spin"></i></span>
         <div>
           <div class="state-msg-title">Generando archivo…</div>
           <div class="state-msg-sub">Esto puede tardar unos segundos. No cierre esta ventana.</div>
@@ -391,7 +394,7 @@
       </div>
 
       <div class="state-message success state-hidden" id="msg-success">
-        <span class="state-msg-icon">✅</span>
+        <span class="state-msg-icon"><i class="fa-solid fa-circle-check"></i></span>
         <div>
           <div class="state-msg-title">Descarga lista</div>
           <div class="state-msg-sub">El archivo se descargó correctamente. Revisa tu carpeta de descargas.</div>
@@ -399,16 +402,16 @@
       </div>
 
       <div class="state-message error state-hidden" id="msg-error">
-        <span class="state-msg-icon">❌</span>
+        <span class="state-msg-icon"><i class="fa-solid fa-circle-xmark"></i></span>
         <div>
           <div class="state-msg-title">Error al generar el archivo</div>
           <div class="state-msg-sub">No se pudo generar el archivo. Verifica los datos del estudio e intenta nuevamente.</div>
-          <button class="btn-retry">↺ Reintentar</button>
+          <button class="btn-retry"><i class="fa-solid fa-rotate-right"></i> Reintentar</button>
         </div>
       </div>
 
       <div class="state-message warning state-hidden" id="msg-missing">
-        <span class="state-msg-icon">⚠️</span>
+        <span class="state-msg-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
         <div>
           <div class="state-msg-title">Anexo obligatorio sin calcular</div>
           <div class="state-msg-sub">El <strong>Resumen de Aplicación</strong> requiere que primero ejecutes el cálculo completo desde el encabezado.</div>
@@ -421,7 +424,7 @@
         <!-- INFORME ACTUARIAL CARD -->
         <div class="informe-card">
           <div class="card-header">
-            <div class="card-icon">📑</div>
+            <div class="card-icon"><i class="fa-solid fa-file-pdf" style="color:#2563eb;"></i></div>
             <div>
               <div class="card-title">Informe Actuarial</div>
               <div class="card-sub">Documento oficial en PDF según normativa activa</div>
@@ -443,7 +446,7 @@
               </div>
             </label>
             <button class="btn-download-main" id="btn-informe" onclick="simulateDownload()">
-              ⬇ Descargar Informe PDF
+              <i class="fa-solid fa-download"></i> Descargar Informe PDF
             </button>
           </div>
         </div>
@@ -455,36 +458,36 @@
           <div class="anexos-group-label">Anexos Principales</div>
 
           <div class="anexo-row" id="row-resumen">
-            <span class="anexo-icon">📊</span>
+            <span class="anexo-icon"><i class="fa-solid fa-chart-pie"></i></span>
             <div class="anexo-name">
               Resumen de Aplicación
               <small>Resumen general del estudio actuarial</small>
             </div>
             <div class="anexo-btns">
-              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
-              <button class="btn-pdf" onclick="dl('pdf')"><span class="btn-icon-txt">⬇</span> PDF</button>
+              <button class="btn-excel" onclick="dl('excel')"><i class="fa-solid fa-download"></i> Excel</button>
+              <button class="btn-pdf" onclick="dl('pdf')"><i class="fa-solid fa-download"></i> PDF</button>
             </div>
           </div>
 
           <div class="anexo-row" id="row-demografica">
-            <span class="anexo-icon">👥</span>
+            <span class="anexo-icon"><i class="fa-solid fa-users"></i></span>
             <div class="anexo-name">
               Anexo de Composición Demográfica
               <small>Distribución y perfil de empleados del estudio</small>
             </div>
             <div class="anexo-btns">
-              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
+              <button class="btn-excel" onclick="dl('excel')"><i class="fa-solid fa-download"></i> Excel</button>
             </div>
           </div>
 
           <div class="anexo-row" id="row-salidas">
-            <span class="anexo-icon">📤</span>
+            <span class="anexo-icon"><i class="fa-solid fa-file-export"></i></span>
             <div class="anexo-name">
               Anexo de Salidas
               <small>Registro de movimientos de empleados del período</small>
             </div>
             <div class="anexo-btns">
-              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
+              <button class="btn-excel" onclick="dl('excel')"><i class="fa-solid fa-download"></i> Excel</button>
             </div>
           </div>
 
@@ -492,49 +495,49 @@
           <div class="anexos-group-label">Anexos Adicionales</div>
 
           <div class="anexo-row" id="row-contabilizacion">
-            <span class="anexo-icon">📒</span>
+            <span class="anexo-icon"><i class="fa-solid fa-book"></i></span>
             <div class="anexo-name">
               Anexo de Contabilización
               <small>Asientos contables bajo normativa activa</small>
             </div>
             <div class="anexo-btns">
-              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
-              <button class="btn-pdf" onclick="dl('pdf')"><span class="btn-icon-txt">⬇</span> PDF</button>
+              <button class="btn-excel" onclick="dl('excel')"><i class="fa-solid fa-download"></i> Excel</button>
+              <button class="btn-pdf" onclick="dl('pdf')"><i class="fa-solid fa-download"></i> PDF</button>
             </div>
           </div>
 
           <div class="anexo-row" id="row-pyg">
-            <span class="anexo-icon">📈</span>
+            <span class="anexo-icon"><i class="fa-solid fa-chart-line"></i></span>
             <div class="anexo-name">
               Anexo de Pérdidas y Ganancias
               <small>Impacto en el estado de resultados</small>
             </div>
             <div class="anexo-btns">
-              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
+              <button class="btn-excel" onclick="dl('excel')"><i class="fa-solid fa-download"></i> Excel</button>
             </div>
           </div>
 
           <div class="anexo-row" id="row-pagos">
-            <span class="anexo-icon">💰</span>
+            <span class="anexo-icon"><i class="fa-solid fa-money-bill-wave"></i></span>
             <div class="anexo-name">
               Anexo Complementario de Pagos
               <small>Detalle de pagos realizados en el período</small>
             </div>
             <div class="anexo-btns">
-              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
+              <button class="btn-excel" onclick="dl('excel')"><i class="fa-solid fa-download"></i> Excel</button>
             </div>
           </div>
 
           <!-- NIC 12 ONLY (hidden by default) -->
           <div class="anexo-row state-hidden" id="row-nic12" style="border-top:1px solid var(--border);">
-            <span class="anexo-icon">🧾</span>
+            <span class="anexo-icon"><i class="fa-solid fa-receipt"></i></span>
             <div class="anexo-name">
               Impuesto Diferido NIC 12
               <small>Tabla de impuesto diferido por beneficios post-empleo</small>
             </div>
             <div class="anexo-btns">
-              <button class="btn-excel" onclick="dl('excel')"><span class="btn-icon-txt">⬇</span> Excel</button>
-              <button class="btn-pdf" onclick="dl('pdf')"><span class="btn-icon-txt">⬇</span> PDF</button>
+              <button class="btn-excel" onclick="dl('excel')"><i class="fa-solid fa-download"></i> Excel</button>
+              <button class="btn-pdf" onclick="dl('pdf')"><i class="fa-solid fa-download"></i> PDF</button>
             </div>
           </div>
 
@@ -606,7 +609,7 @@ function setState(state, btn) {
       if (!btns.querySelector('.missing-badge')) {
         const badge = document.createElement('span');
         badge.className = 'missing-badge';
-        badge.innerHTML = '⚠ Sin calcular';
+        badge.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Sin calcular';
         btns.insertBefore(badge, btns.firstChild);
       }
       break;
@@ -667,7 +670,7 @@ function simulateDownload() {
   const btn = document.getElementById('btn-informe');
   const original = btn.innerHTML;
   btn.disabled = true;
-  btn.innerHTML = '⏳ Generando…';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando…';
   document.getElementById('msg-generating').classList.remove('state-hidden');
   ['msg-success','msg-error','msg-missing'].forEach(id => document.getElementById(id).classList.add('state-hidden'));
 
@@ -683,10 +686,10 @@ function dl(type) {
   // Visual feedback only for prototype
   const btn = event.currentTarget;
   const orig = btn.innerHTML;
-  btn.innerHTML = '⏳';
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
   btn.disabled = true;
   setTimeout(() => {
-    btn.innerHTML = '✓';
+    btn.innerHTML = '<i class="fa-solid fa-check"></i>';
     setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 800);
   }, 1000);
 }
